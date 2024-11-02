@@ -109,3 +109,121 @@ impl CacheInner {
       self.memory_used + needed_space as i64 <= self.max_memory
     }
 }
+
+#[napi]
+pub struct MussuranaCache {
+  inner: Arc<Mutex<CacheInner>>,
+}
+
+#[napi]
+impl MussuranaCache {
+    #[napi(constructor)]
+    pub fn new(options: Option<CacheOptions>) -> Self {
+      let options = options.unwrap_or(CacheOptions {
+        max_memory: Some(104857600),
+        max_items: Some(10000),
+        check_period: Some(60000),
+      });
+
+      let max_memory = options.max_memory.unwrap_or(104857600);
+      let max_items = options.max_items.unwrap_or(10000);
+      let check_period = options.check_period.unwrap_or(60000);
+
+      let inner = Arc::new(Mutex::new(CacheInner::new(
+        max_memory,
+        max_items,
+      )));
+
+      let cleanup_inner = Arc::clone(&inner);
+
+      std::thread::spawn(move || {
+        loop {
+            std::thread::sleep(std::time::Duration::from_millis(check_period as u64));
+            if let Ok(mut guard) = cleanup_inner.lock() {
+                (*guard).clean_expired();
+            }
+        }
+    });
+
+      Self {
+        inner,
+      }
+    }
+
+    #[napi]
+    pub fn set(&self, key: String, value: String, ttl: Option<i32>, priority: Option<i32>) -> bool {
+        let entry_size = CacheInner::get_entry_size(&key, &value);
+        let mut cache = self.inner.lock().unwrap();
+
+        if cache.data.len() >= cache.max_items as usize {
+            return false;
+        }
+
+        let expires_at = ttl.map(|ttl| {
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs() as i64 + ttl as i64
+        });
+
+        let entry = CacheEntry {
+            value,
+            size: entry_size,
+            priority: priority.unwrap_or(128),
+            created_at: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs() as i64,
+            expires_at,
+        };
+
+        if !cache.make_space(entry_size) {
+            return false;
+        }
+
+        if let Some(old_entry) = cache.data.insert(key, entry) {
+            cache.memory_used -= old_entry.size as i64;
+        }
+        cache.memory_used += entry_size as i64;
+        true
+    }
+
+    #[napi]
+    pub fn get(&self, key: String) -> Option<String> {
+        let mut cache = self.inner.lock().unwrap();
+
+        let result = cache.data.get(&key).map(|entry| {
+            if let Some(expires_at) = entry.expires_at {
+                let now = SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs() as i64;
+
+                if now > expires_at {
+                    None
+                } else {
+                    Some(entry.value.clone())
+                }
+            } else {
+                Some(entry.value.clone())
+            }
+        }).flatten();
+
+        match result {
+            Some(value) => {
+                cache.hits += 1;
+                Some(value)
+            }
+            None => {
+                if cache.data.contains_key(&key) {
+                    if let Some(entry) = cache.data.remove(&key) {
+                        cache.memory_used -= entry.size as i64;
+                    }
+                }
+
+                cache.misses += 1;
+                None
+            }
+        }
+    }
+}
