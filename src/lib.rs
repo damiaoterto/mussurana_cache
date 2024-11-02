@@ -63,4 +63,27 @@ impl CacheInner {
     fn get_entry_size(key: &str, value: &str) -> i32 {
       (key.len() + value.len() + size_of::<CacheEntry>()) as i32
     }
+
+    fn clean_expired(&mut self) {
+      let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+
+      let expired: Vec<String> = self.data
+        .iter()
+        .filter(|(_, entry)| {
+          entry.expires_at
+            .map(|expires| expires < now)
+            .unwrap_or(false)
+        })
+        .map(|(k, _)| k.clone())
+        .collect();
+
+      for key in expired {
+        if let Some(entry) = self.data.remove(&key) {
+          self.memory_used -= entry.size as i64;
+        }
+      }
+    }
 }
