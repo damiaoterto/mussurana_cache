@@ -37,3 +37,30 @@ pub struct CacheEntry {
   pub created_at: i64,
   pub expires_at: Option<i64>,
 }
+
+#[derive(Clone)]
+struct CacheInner {
+  data: HashMap<String, CacheEntry>,
+  max_memory: i64,
+  max_items: i32,
+  memory_used: i64,
+  hits: i32,
+  misses: i32,
+}
+
+impl CacheInner {
+    fn new (max_memory: i64, max_items: i32) -> Self {
+      Self {
+        data: HashMap::new(),
+        max_memory,
+        max_items,
+        memory_used: 0,
+        hits: 0,
+        misses: 0,
+      }
+    }
+
+    fn get_entry_size(key: &str, value: &str) -> i32 {
+      (key.len() + value.len() + size_of::<CacheEntry>()) as i32
+    }
+}
