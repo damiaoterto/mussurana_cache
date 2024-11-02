@@ -86,4 +86,26 @@ impl CacheInner {
         }
       }
     }
+
+    fn make_space(&mut self, needed_space: i32) -> bool {
+      if needed_space as i64 > self.max_memory {
+        return false
+      }
+
+      while self.memory_used + needed_space as i64 > self.max_memory {
+        if let Some((key_to_remove, _)) = self.data
+          .iter()
+          .min_by_key(|(_, entry)| (entry.priority, entry.created_at))
+          .map(|(k, v)| (k.clone(), v.clone()))
+        {
+          if let Some(entry) = self.data.remove(&key_to_remove) {
+            self.memory_used -= entry.size as i64;
+          }
+        } else {
+          break;
+        }
+      }
+
+      self.memory_used + needed_space as i64 <= self.max_memory
+    }
 }
