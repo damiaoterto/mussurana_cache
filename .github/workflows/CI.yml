@@ -73,10 +73,10 @@ jobs:
         if: matrix.settings.target == 'i686-pc-windows-msvc'
         run: yarn config set supportedArchitectures.cpu "ia32"
         shell: bash
-      - name: Install latest Yarn
-        run: corepack prepare yarn@4.5.1 --activate
-      - name: Activate latest Yarn
-        run: yarn set version 4.5.1
+      - name: Setup Latest Yarn
+        uses: threeal/setup-yarn-action@v2.0.0
+        with:
+          version: latest
       - name: Install dependencies
         run: yarn install
       - name: Setup node x86
