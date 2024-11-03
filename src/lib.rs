@@ -119,35 +119,35 @@ pub struct MussuranaCache {
 impl MussuranaCache {
     #[napi(constructor)]
     pub fn new(options: Option<CacheOptions>) -> Self {
-      let options = options.unwrap_or(CacheOptions {
-        max_memory: Some(104857600),
-        max_items: Some(10000),
-        check_period: Some(60000),
-      });
+        let options = options.unwrap_or(CacheOptions {
+            max_memory: Some(104857600),
+            max_items: Some(10000),
+            check_period: Some(60000),
+        });
 
-      let max_memory = options.max_memory.unwrap_or(104857600);
-      let max_items = options.max_items.unwrap_or(10000);
-      let check_period = options.check_period.unwrap_or(60000);
+        let max_memory = options.max_memory.unwrap_or(104857600);
+        let max_items = options.max_items.unwrap_or(10000);
+        let check_period = options.check_period.unwrap_or(60000);
 
-      let inner = Arc::new(Mutex::new(CacheInner::new(
-        max_memory,
-        max_items,
-      )));
+        let inner = Arc::new(Mutex::new(CacheInner::new(
+            max_memory,
+            max_items,
+        )));
 
-      let cleanup_inner = Arc::clone(&inner);
+        let cleanup_inner = Arc::clone(&inner);
 
-      std::thread::spawn(move || {
-        loop {
-            std::thread::sleep(std::time::Duration::from_millis(check_period as u64));
-            if let Ok(mut guard) = cleanup_inner.lock() {
-                (*guard).clean_expired();
+        std::thread::spawn(move || {
+            loop {
+                std::thread::sleep(std::time::Duration::from_millis(check_period as u64));
+                if let Ok(mut guard) = cleanup_inner.lock() {
+                    (*guard).clean_expired();
+                }
             }
-        }
-    });
+        });
 
-      Self {
-        inner,
-      }
+        Self {
+            inner,
+        }
     }
 
     #[napi]
@@ -225,5 +225,14 @@ impl MussuranaCache {
                 None
             }
         }
+    }
+
+    #[napi]
+    pub fn clear(&self) {
+        let mut cache = self.inner.lock().unwrap();
+        cache.data.clear();
+        cache.memory_used = 0;
+        cache.hits = 0;
+        cache.misses = 0;
     }
 }
