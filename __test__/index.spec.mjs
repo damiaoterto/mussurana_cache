@@ -44,6 +44,16 @@ test('should delete value successfully', t => {
     cache.delete('key1')
 
     t.is(cache.get('key1'), null)
+});
+
+test('should get stats successfully', t => {
+    const { cache } = t.context
+
+    const stats = cache.getStats()
+    console.log(stats)
+
+    t.truthy(stats.memoryUsage);
+    t.truthy(stats.maxItems);
 })
 
 test('should return null for non-existent key', t => {

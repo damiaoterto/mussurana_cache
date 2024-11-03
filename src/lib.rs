@@ -240,6 +240,19 @@ impl MussuranaCache {
     }
 
     #[napi]
+    pub fn get_stats(&self) -> CacheStats {
+        let cache = self.inner.lock().unwrap();
+
+        CacheStats {
+            memory_usage: cache.max_memory,
+            max_items: cache.max_items,
+            memory_used: cache.memory_used,
+            hits: cache.hits as i64,
+            misses: cache.misses as i64
+        }
+    }
+
+    #[napi]
     pub fn clear(&self) {
         let mut cache = self.inner.lock().unwrap();
         cache.data.clear();
