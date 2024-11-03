@@ -126,10 +126,9 @@ jobs:
         run: |
           mkdir -p npm
           find artifacts -name "*.node" -exec cp {} npm/ \;
-          cp package.json npm/
-          cp README.md npm/
-          cp index.js npm/
-          cp index.d.ts npm/
+          cp package.json README.md index.js index.d.ts npm/
+          echo "Contents of npm directory:"
+          ls -la npm/
 
       - name: Check version and publish
         run: |
