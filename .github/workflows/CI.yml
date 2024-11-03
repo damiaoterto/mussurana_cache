@@ -80,15 +80,26 @@ jobs:
         run: yarn test
 
       - name: List files
+        shell: bash
         run: |
           echo "Current directory:"
-          ls -la
-          echo "Node files:"
-          ls -la *.node || true
-          echo "TypeScript files:"
-          ls -la *.d.ts || true
-          echo "JavaScript files:"
-          ls -la *.js || true
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            dir
+            echo "Node files:"
+            dir *.node 2>nul || echo "No .node files found"
+            echo "TypeScript files:"
+            dir *.d.ts 2>nul || echo "No .d.ts files found"
+            echo "JavaScript files:"
+            dir *.js 2>nul || echo "No .js files found"
+          else
+            ls -la
+            echo "Node files:"
+            ls -la *.node 2>/dev/null || echo "No .node files found"
+            echo "TypeScript files:"
+            ls -la *.d.ts 2>/dev/null || echo "No .d.ts files found"
+            echo "JavaScript files:"
+            ls -la *.js 2>/dev/null || echo "No .js files found"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
