@@ -79,16 +79,27 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: List files
+        run: |
+          echo "Current directory:"
+          ls -la
+          echo "Node files:"
+          ls -la *.node || true
+          echo "TypeScript files:"
+          ls -la *.d.ts || true
+          echo "JavaScript files:"
+          ls -la *.js || true
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.config.target }}
           path: |
-            ${{ env.APP_NAME }}.*.node
-            package.json
-            README.md
-            index.js
-            index.d.ts
+            ./${{ env.APP_NAME }}.*.node
+            ./package.json
+            ./README.md
+            ./index.js
+            ./index.d.ts
           if-no-files-found: error
 
   publish:
@@ -119,14 +130,21 @@ jobs:
         with:
           path: artifacts
 
-      - name: List artifacts
-        run: ls -R artifacts/
-
       - name: Prepare package
         run: |
           mkdir -p npm
           find artifacts -name "*.node" -exec cp {} npm/ \;
-          cp package.json README.md index.js index.d.ts npm/
+          cp package.json README.md npm/
+          # Verificar se os arquivos existem antes de copiar
+          for file in index.js index.d.ts; do
+            if [ -f "$file" ]; then
+              cp "$file" npm/
+            else
+              echo "Warning: $file not found in root directory"
+              # Procurar nos artefatos
+              find artifacts -name "$file" -exec cp {} npm/ \;
+            fi
+          done
           echo "Contents of npm directory:"
           ls -la npm/
 
