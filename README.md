@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/damiaoterto/mussurana_cache/main/assets/logo.png" width="250" height="auto" alt="Mussurana Cache - High-performance cache system from Northeast Brazil" />
-</div>
-
 # Mussurana Cache
 
 A high-performance in-memory cache implementation for Node.js, written in Rust using napi-rs. Mussurana Cache provides efficient memory management, TTL support, and priority-based eviction policies.
