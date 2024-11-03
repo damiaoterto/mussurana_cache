@@ -189,12 +189,6 @@ The name choice reflects both our Northeastern Brazilian heritage and the cache'
 
 This project is part of a broader initiative to bring Brazilian, particularly Northeastern Brazilian, technology to the global stage. We believe that by embracing our cultural identity while delivering high-quality software, we can enrich the global tech community with our unique perspective and solutions.
 
-Some characteristics that reflect our regional approach:
-
-- **Community-focused**: Like our regional culture of mutual help
-- **Adaptive**: Dealing with constraints creatively, a hallmark of Northeastern resilience
-- **Efficient**: Making the most of available resources
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
