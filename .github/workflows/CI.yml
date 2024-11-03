@@ -83,7 +83,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.config.target }}
-          path: ${{ env.APP_NAME }}.*.node
+          path: |
+            ${{ env.APP_NAME }}.*.node
+            package.json
+            README.md
+            index.js
+            index.d.ts
           if-no-files-found: error
 
   publish:
@@ -123,6 +128,8 @@ jobs:
           find artifacts -name "*.node" -exec cp {} npm/ \;
           cp package.json npm/
           cp README.md npm/
+          cp index.js npm/
+          cp index.d.ts npm/
 
       - name: Check version and publish
         run: |
