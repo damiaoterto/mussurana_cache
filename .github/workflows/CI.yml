@@ -123,6 +123,8 @@ jobs:
           find artifacts -name "*.node" -exec cp {} npm/ \;
           cp package.json npm/
           cp README.md npm/
+          cp index.js npm/
+          cp index.d.ts npm/
 
       - name: Check version and publish
         run: |
