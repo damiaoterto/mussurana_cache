@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/damiaoterto/mussurana_cache/main/assets/logo.png" width="800" height="auto" alt="Mussurana Cache - High-performance cache system from Northeast Brazil" />
+  <img src="https://raw.githubusercontent.com/damiaoterto/mussurana_cache/main/assets/logo.png" width="250" height="auto" alt="Mussurana Cache - High-performance cache system from Northeast Brazil" />
 </div>
 
 # Mussurana Cache
