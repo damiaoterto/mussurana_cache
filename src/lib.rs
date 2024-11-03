@@ -228,6 +228,18 @@ impl MussuranaCache {
     }
 
     #[napi]
+    pub fn delete(&self, key: String) -> bool {
+        let mut cache = self.inner.lock().unwrap();
+
+        if let Some(entry) = cache.data.remove(&key) {
+            cache.memory_used -= entry.size as i64;
+            return true
+        }
+
+        false
+    }
+
+    #[napi]
     pub fn clear(&self) {
         let mut cache = self.inner.lock().unwrap();
         cache.data.clear();

@@ -34,6 +34,18 @@ test('should set and get value successfully', t => {
     t.is(cache.get('key1'), 'value1');
 });
 
+test('should delete value successfully', t => {
+    const { cache } = t.context
+
+    cache.set('key1', 'value')
+
+    t.is(cache.get('key1'), 'value')
+
+    cache.delete('key1')
+
+    t.is(cache.get('key1'), null)
+})
+
 test('should return null for non-existent key', t => {
     const { cache } = t.context;
     t.is(cache.get('nonexistent'), null);
