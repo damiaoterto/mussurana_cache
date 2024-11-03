@@ -87,7 +87,7 @@ jobs:
     name: Publish
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
@@ -111,16 +111,32 @@ jobs:
         with:
           path: artifacts
 
+      - name: List artifacts
+        run: ls -R artifacts/
+
       - name: Prepare package
         run: |
           mkdir -p npm
-          cp -r artifacts/*/*.node npm/
+          find artifacts -name "*.node" -exec cp {} npm/ \;
           cp package.json npm/
 
-      - name: Publish to npm
-        run: |
-          cd npm
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          npm publish --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          - name: Check version and publish
+          run: |
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            cd npm
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+
+            if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+              if [[ $PACKAGE_VERSION =~ "-alpha" ]]; then
+                npm publish --tag alpha --access public
+              elif [[ $PACKAGE_VERSION =~ "-beta" ]]; then
+                npm publish --tag beta --access public
+              elif [[ $PACKAGE_VERSION =~ "-rc" ]]; then
+                npm publish --tag rc --access public
+              else
+                npm publish --access public
+              fi
+            fi
+          env:
+            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
