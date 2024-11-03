@@ -13,6 +13,8 @@ on:
         - '**/*.png'
   pull_request:
       branches: [main]
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -88,7 +90,7 @@ jobs:
     name: Publish
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'release'
 
     steps:
       - uses: actions/checkout@v4
