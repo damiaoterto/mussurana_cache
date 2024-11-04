@@ -21,7 +21,7 @@ npm install mussurana
 ## Quick Start
 
 ```typescript
-import { MussuranaCache } from 'mussurana';
+import { MussuranaCache } from 'mussurana_cache';
 
 // Create a new cache instance
 const cache = new MussuranaCache({
@@ -130,7 +130,7 @@ When the cache is full, items are evicted based on:
 ## Example: Caching User Data
 
 ```typescript
-import { MussuranaCache } from 'mussurana';
+import { MussuranaCache } from 'mussurana_cache';
 
 const cache = new MussuranaCache({
     maxMemory: 200 * 1024 * 1024  // 200MB
@@ -203,5 +203,3 @@ MIT License
 - Inspired by modern cache implementations
 
 ---
-
-For more information, please check our [documentation](https://github.com/yourusername/mussurana/wiki) or open an issue.
