@@ -15,7 +15,7 @@ A high-performance in-memory cache implementation for Node.js, written in Rust u
 ## Installation
 
 ```bash
-npm install mussurana
+npm install mussurana_cache
 ```
 
 ## Quick Start
