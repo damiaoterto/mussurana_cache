@@ -1,0 +1,169 @@
+name: Publish
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '**/*.png'
+  release:
+    types: [created]
+
+env:
+  CARGO_TERM_COLOR: always
+  APP_NAME: mussurana_cache
+
+jobs:
+  build:
+    name: Build ${{ matrix.config.target }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              os: ubuntu-latest,
+              target: x86_64-unknown-linux-gnu,
+              cross: false
+          }
+          - {
+              os: windows-latest,
+              target: x86_64-pc-windows-msvc,
+              cross: false
+          }
+          - {
+              os: macos-latest,
+              target: x86_64-apple-darwin,
+              cross: false
+            }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+            node-version: '20.x'
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.config.target }}
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.config.target }}
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.config.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config build-essential
+
+      - name: Setup yarn
+        uses: threeal/setup-yarn-action@v2.0.0
+        with:
+          version: latest
+
+      - name: Install npm dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+        env:
+          RUST_BACKTRACE: 1
+
+      - name: Test
+        run: yarn test
+
+      - name: List files
+        shell: bash
+        run: |
+          echo "Current directory:"
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            dir
+            echo "Node files:"
+            dir *.node 2>nul || echo "No .node files found"
+            echo "TypeScript files:"
+            dir *.d.ts 2>nul || echo "No .d.ts files found"
+            echo "JavaScript files:"
+            dir *.js 2>nul || echo "No .js files found"
+          else
+            ls -la
+            echo "Node files:"
+            ls -la *.node 2>/dev/null || echo "No .node files found"
+            echo "TypeScript files:"
+            ls -la *.d.ts 2>/dev/null || echo "No .d.ts files found"
+            echo "JavaScript files:"
+            ls -la *.js 2>/dev/null || echo "No .js files found"
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.config.target }}
+          path: |
+            ./${{ env.APP_NAME }}.*.node
+            ./package.json
+            ./README.md
+            ./index.js
+            ./index.d.ts
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup yarn
+        uses: threeal/setup-yarn-action@v2.0.0
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List Artifacts
+        run: |
+          ls -a
+
+      - name: Move artifacts
+        run: yarn artifacts
+
+      - name: Run prepublishOnly script
+        run: yarn prepublishOnly || echo "prepublishOnly script failed, but continuing"
+
+
+      - name: Check version and publish
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          cd npm
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+
+          if [[ $PACKAGE_VERSION =~ "-alpha" ]]; then
+            npm publish --tag alpha --access public
+          elif [[ $PACKAGE_VERSION =~ "-beta" ]]; then
+            npm publish --tag beta --access public
+          elif [[ $PACKAGE_VERSION =~ "-rc" ]]; then
+            npm publish --tag rc --access public
+          else
+            npm publish --access public
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
