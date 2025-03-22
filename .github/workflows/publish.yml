@@ -21,21 +21,20 @@ jobs:
           - {
               os: ubuntu-latest,
               target: x86_64-unknown-linux-gnu,
+              build: yarn build --target x86_64-unknown-linux-gnu,
+              docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian,
               cross: false
           }
           - {
               os: windows-latest,
               target: x86_64-pc-windows-msvc,
+              build: yarn build --target x86_64-pc-windows-msvc,
               cross: false
           }
           - {
               os: macos-latest,
               target: x86_64-apple-darwin,
-              cross: false
-            }
-          - {
-              os: macos-latest,
-              target: aarch64-apple-darwin,
+              build: yarn build --target x86_64-apple-darwin,
               cross: false
             }
     steps:
@@ -67,23 +66,25 @@ jobs:
         with:
           version: latest
 
-      - name: Install npm dependencies
+      - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build in docker
+        uses: addnab/docker-run-action@v3
+        if: ${{ matrix.config.docker }}
+        with:
+          image: ${{ matrix.config.docker }}
+          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
+          run: ${{ matrix.config.build }}
+
       - name: Build
-        run: yarn build
+        if: ${{ !matrix.config.docker }}
+        run: ${{ matrix.config.build }}
         env:
           RUST_BACKTRACE: 1
 
       - name: Test
         run: yarn test
-
-      - name: Rename macOS binaries (if needed)
-        if: matrix.config.target == 'x86_64-apple-darwin'
-        run: |
-          if [ -f "./${{ env.APP_NAME }}.darwin-arm64.node" ]; then
-            mv "./${{ env.APP_NAME }}.darwin-arm64.node" "./${{ env.APP_NAME }}.darwin-x64.node"
-          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -127,7 +128,7 @@ jobs:
           find artifacts -type f | sort
 
       - name: Prepare package.json for publication
-        run: yarn artifacts
+        run: yarn artifacts --verbose
 
       - name: Create npm path
         run: yarn prepublishOnly
