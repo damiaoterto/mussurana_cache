@@ -83,6 +83,9 @@ jobs:
         env:
           RUST_BACKTRACE: 1
 
+      - name: List files
+        run: ls -a
+
       - name: Test
         run: yarn test
 
