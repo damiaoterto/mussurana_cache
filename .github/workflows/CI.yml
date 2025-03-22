@@ -141,6 +141,10 @@ jobs:
         with:
           path: artifacts
 
+      - name: List Artifacts
+        run: |
+          ls -R ./
+
       - name: Pre-Publish
         run: yarn prepublishOnly
 
