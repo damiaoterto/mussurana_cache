@@ -148,7 +148,6 @@ jobs:
       - name: Run prepublishOnly script
         run: yarn prepublishOnly || echo "prepublishOnly script failed, but continuing"
 
-
       - name: Check version and publish
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
