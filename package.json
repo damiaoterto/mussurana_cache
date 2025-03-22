@@ -28,10 +28,5 @@
     "universal": "napi universal",
     "version": "napi version"
   },
-  "packageManager": "yarn@4.5.1",
-  "optionalDependencies": {
-    "mussurana_cache-win32-x64-msvc": "1.0.1",
-    "mussurana_cache-darwin-x64": "1.0.1",
-    "mussurana_cache-linux-x64-gnu": "1.0.1"
-  }
+  "packageManager": "yarn@4.5.1"
 }
