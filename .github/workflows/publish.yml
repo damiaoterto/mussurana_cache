@@ -133,8 +133,16 @@ jobs:
         with:
           path: artifacts
 
+      - name: Debug artifact structure
+        run: |
+          echo "Artifact directory structure:"
+          find artifacts -type f | sort
+
+      - name: Execute prepublishOnly
+        run: yarn prepublishOnly
+
       - name: Prepare package.json for publication
-        run: yarn prepare
+        run: yarn artifacts
 
       - name: Check version and publish
         run: |
