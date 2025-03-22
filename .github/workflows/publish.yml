@@ -64,7 +64,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build
+        run: yarn build --target ${{ matrix.config.target }}
         env:
           RUST_BACKTRACE: 1
 
@@ -99,10 +99,6 @@ jobs:
           name: bindings-${{ matrix.config.target }}
           path: |
             ./${{ env.APP_NAME }}.*.node
-            ./package.json
-            ./README.md
-            ./index.js
-            ./index.d.ts
           if-no-files-found: error
 
   publish:
@@ -137,9 +133,6 @@ jobs:
         run: |
           echo "Artifact directory structure:"
           find artifacts -type f | sort
-
-      - name: Execute prepublishOnly
-        run: yarn prepublishOnly
 
       - name: Prepare package.json for publication
         run: yarn artifacts
