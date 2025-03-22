@@ -6,7 +6,12 @@
   "types": "index.d.ts",
   "napi": {
     "name": "mussurana_cache",
-    "triples": {}
+    "triples": {
+        "defaults": true,
+        "additional": [
+            "aarch64-apple-darwin"
+        ]
+    }
   },
   "license": "MIT",
   "devDependencies": {
