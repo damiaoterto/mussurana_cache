@@ -66,7 +66,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build --target ${{ matrix.config.target }}
+        run: yarn build
         env:
           RUST_BACKTRACE: 1
 
