@@ -33,6 +33,11 @@ jobs:
               target: x86_64-apple-darwin,
               cross: false
             }
+          - {
+              os: macos-latest,
+              target: aarch64-apple-darwin,
+              cross: false
+            }
     steps:
       - uses: actions/checkout@v4
 
@@ -72,6 +77,13 @@ jobs:
 
       - name: Test
         run: yarn test
+
+      - name: Rename macOS binaries (if needed)
+        if: matrix.config.target == 'x86_64-apple-darwin'
+        run: |
+          if [ -f "./${{ env.APP_NAME }}.darwin-arm64.node" ]; then
+            mv "./${{ env.APP_NAME }}.darwin-arm64.node" "./${{ env.APP_NAME }}.darwin-x64.node"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
