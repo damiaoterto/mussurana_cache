@@ -37,6 +37,12 @@ jobs:
               build: yarn build --target x86_64-apple-darwin,
               cross: false
             }
+          - {
+              os: macos-latest,
+              target: aarch64-apple-darwin,
+              build: yarn build --target aarch64-apple-darwin,
+              cross: true
+          }
     steps:
       - uses: actions/checkout@v4
 
@@ -82,9 +88,6 @@ jobs:
         run: ${{ matrix.config.build }}
         env:
           RUST_BACKTRACE: 1
-
-      - name: List files
-        run: ls -a
 
       - name: Test
         run: yarn test
