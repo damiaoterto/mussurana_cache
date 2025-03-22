@@ -141,23 +141,8 @@ jobs:
         with:
           path: artifacts
 
-      - name: Prepare package
-        run: |
-          mkdir -p npm
-          find artifacts -name "*.node" -exec cp {} npm/ \;
-          cp package.json README.md npm/
-          # Verificar se os arquivos existem antes de copiar
-          for file in index.js index.d.ts; do
-            if [ -f "$file" ]; then
-              cp "$file" npm/
-            else
-              echo "Warning: $file not found in root directory"
-              # Procurar nos artefatos
-              find artifacts -name "$file" -exec cp {} npm/ \;
-            fi
-          done
-          echo "Contents of npm directory:"
-          ls -la npm/
+      - name: Move artifacts
+        run: yarn artifacts
 
       - name: Check version and publish
         run: |
