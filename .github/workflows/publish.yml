@@ -133,15 +133,20 @@ jobs:
         with:
           path: artifacts
 
-      - name: List Artifacts
+      - name: Prepare package.json for publication
+        shell: node
         run: |
-          ls -a
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
-      - name: Move artifacts
-        run: yarn artifacts
+          // Re-add optional dependencies for publication
+          pkg.optionalDependencies = {
+            [`${pkg.name}-win32-x64-msvc`]: pkg.version,
+            [`${pkg.name}-darwin-x64`]: pkg.version,
+            [`${pkg.name}-linux-x64-gnu`]: pkg.version
+          };
 
-      - name: Run prepublishOnly script
-        run: yarn prepublishOnly || echo "prepublishOnly script failed, but continuing"
+          fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2));
 
       - name: Check version and publish
         run: |
