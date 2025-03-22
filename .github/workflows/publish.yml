@@ -1,11 +1,6 @@
 name: Publish
 
 on:
-  push:
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - '**/*.png'
   release:
     types: [created]
 
