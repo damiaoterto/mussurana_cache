@@ -125,7 +125,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: ${{ env.APP_NAME }}.*.node
+          path: |
+            ${{ env.APP_NAME }}.*.node
+            index.js
+            index.d.ts
           if-no-files-found: error
   test-macOS-windows-binding:
     name: Test bindings on ${{ matrix.settings.target }} - node@${{ matrix.node }}
@@ -217,6 +220,10 @@ jobs:
       - name: List packages
         run: ls -R .
         shell: bash
+      - name: Setup yarn
+        uses: threeal/setup-yarn-action@v2.0.0
+        with:
+          version: latest
       - name: Install dependencies
         run: |
           yarn config set supportedArchitectures.cpu "arm64"
