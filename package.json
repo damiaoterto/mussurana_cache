@@ -7,8 +7,19 @@
   "napi": {
     "name": "mussurana_cache",
     "triples": {
+      "defaults": true,
+      "additional": [
+        "x86_64-apple-darwin",
+        "x86_64-pc-windows-msvc",
+        "x86_64-unknown-linux-gnu"
+      ]
     }
   },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "npm"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
@@ -30,5 +41,10 @@
     "universal": "napi universal",
     "version": "napi version"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.5.1",
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ]
 }

@@ -227,9 +227,6 @@ jobs:
         with:
           path: artifacts
 
-      - name: Prepare Publish
-        run: yarn prepublishOnly
-
       - name: Move artifacts
         run: yarn artifacts
 
