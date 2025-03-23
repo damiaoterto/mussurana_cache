@@ -7,10 +7,6 @@
   "napi": {
     "name": "mussurana_cache",
     "triples": {
-        "defaults": true,
-        "additional": [
-            "aarch64-apple-darwin"
-        ]
     }
   },
   "license": "MIT",
