@@ -89,8 +89,20 @@ jobs:
         env:
           RUST_BACKTRACE: 1
 
+      - name: Prepare artifacts for testing
+        run: |
+          mkdir -p artifacts
+          cp ${{ env.APP_NAME }}.*.node artifacts/
+          ls -la artifacts/
+
       - name: Test
+        if: ${{ !matrix.config.cross }}
         run: yarn test
+
+      - name: Test ARM64 build (skip on cross-compile)
+        if: ${{ matrix.config.cross }}
+        run: echo "Skipping tests for cross-compiled target ${{ matrix.config.target }}"
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
