@@ -133,7 +133,7 @@ jobs:
           find artifacts -type f | sort
 
       - name: Prepare package.json for publication
-        run: yarn artifacts --verbose
+        run: yarn artifacts
 
       - name: Create npm path
         run: yarn prepublishOnly
