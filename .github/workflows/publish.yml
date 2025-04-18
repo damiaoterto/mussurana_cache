@@ -230,6 +230,9 @@ jobs:
         with:
           path: artifacts
 
+      - name: List Packages
+        run: ls -a ./
+
       - name: Prepublish
         run: yarn run prepublishOnly
 
@@ -239,13 +242,8 @@ jobs:
       - name: Move artifacts
         run: yarn artifacts
 
-      - name: Copy index
-        run: |
-          cp artifacts/index.js ./index.js
-          cp artifacts/index.d.ts ./index.d.ts
-
       - name: List packages
-        run: ls -R ./npm
+        run: ls -R ./
         shell: bash
 
       - name: Publish
