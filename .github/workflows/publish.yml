@@ -112,8 +112,8 @@ jobs:
         with:
           name: bindings-${{ matrix.settings.target }}
           path: |
-            index.js
-            index.d.ts
+            ./index.js
+            ./index.d.ts
             ${{ env.APP_NAME }}.*.node
           if-no-files-found: error
 
@@ -238,6 +238,11 @@ jobs:
 
       - name: Move artifacts
         run: yarn artifacts
+
+      - name: Copy index
+        run: |
+          cp artifacts/index.js ./index.js
+          cp artifacts/index.d.ts ./index.d.ts
 
       - name: List packages
         run: ls -R ./npm
