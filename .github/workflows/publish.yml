@@ -18,7 +18,6 @@ on:
       - '**/*.gitignore'
       - .editorconfig
       - docs/**
-  pull_request: null
 jobs:
   build:
     strategy:
