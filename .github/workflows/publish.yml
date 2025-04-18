@@ -157,7 +157,7 @@ jobs:
           path: .
 
       - name: List packages
-        run: ls -R .
+        run: ls -a .
         shell: bash
 
       - name: Test bindings
@@ -197,11 +197,11 @@ jobs:
           path: .
 
       - name: List packages
-        run: ls -R .
+        run: ls -a .
         shell: bash
 
       - name: Test bindings
-        run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-slim yarn test
+        run: yarn test
 
   publish:
     name: Publish
