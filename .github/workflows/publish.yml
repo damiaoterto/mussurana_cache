@@ -230,6 +230,12 @@ jobs:
         with:
           path: artifacts
 
+      - name: Prepublish
+        run: yarn run prepublishOnly
+
+      - name: Create NPM Path
+        run: yarn run prepare
+
       - name: Move artifacts
         run: yarn artifacts
 
