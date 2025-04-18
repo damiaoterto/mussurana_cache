@@ -40,7 +40,7 @@ const value = cache.get('key');
 cache.delete('key');
 
 // Get cache statistics
-const stats = cache.get_stats();
+const stats = cache.getStats();
 console.log('Cache Stats:', stats);
 ```
 
@@ -86,7 +86,7 @@ Removes a value from the cache.
 
 Clears all items from the cache.
 
-#### `get_stats(): CacheStats`
+#### `getStats(): CacheStats`
 
 Returns current cache statistics.
 
@@ -150,7 +150,7 @@ function getUserData(userId: string): string | null {
 
 // Monitor cache performance
 setInterval(() => {
-    const stats = cache.get_stats();
+    const stats = cache.getStats();
     console.log('Cache Performance:', {
         memoryUsedMB: stats.memory_used / (1024 * 1024),
         items: stats.items_count,
