@@ -22,6 +22,13 @@ export interface CacheEntry {
   createdAt: number
   expiresAt?: number
 }
+export declare function createMemoryUnits(): MemoryUnits
+export declare class MemoryUnits {
+  b: number
+  kb: number
+  mb: number
+  gb: number
+}
 export declare class MussuranaCache {
   constructor(options?: CacheOptions | undefined | null)
   set(key: string, value: string, ttl?: number | undefined | null, priority?: number | undefined | null): boolean

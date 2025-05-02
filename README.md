@@ -21,11 +21,14 @@ npm install mussurana-cache
 ## Quick Start
 
 ```typescript
-import { MussuranaCache } from 'mussurana-cache';
+import { MussuranaCache, createMemoryUnits } from 'mussurana-cache';
+
+// optional utility
+const memory = createMemoryUnits()
 
 // Create a new cache instance
 const cache = new MussuranaCache({
-    maxMemory: 100 * 1024 * 1024, // 100MB
+    maxMemory: memory.mb * 100, // 100MB or 100 * 1024 * 1024
     maxItems: 10000,              // Maximum number of items
     checkPeriod: 60000           // Cleanup interval in milliseconds
 });
