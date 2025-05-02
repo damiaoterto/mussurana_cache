@@ -1,14 +1,16 @@
 import test from 'ava'
 import { setTimeout } from 'node:timers/promises'
-import { MussuranaCache } from '../index.js'
+import { MussuranaCache, createMemoryUnits } from '../index.js'
 
 const waitForNextCleanupCycle = (checkPeriod) => {
     return setTimeout(checkPeriod + 100);
 };
 
 test.beforeEach(t => {
+    const memory = createMemoryUnits()
+
     t.context.cache = new MussuranaCache({
-      maxMemory: 1024 * 1024,
+      maxMemory: memory.mb * 2,
       maxItems: 1000,
       checkPeriod: 1000
     });

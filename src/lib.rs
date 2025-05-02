@@ -10,6 +10,14 @@ use std::{
 #[macro_use]
 extern crate napi_derive;
 
+#[napi]
+pub struct MemoryUnits {
+    pub b:  i64, // Bytes
+    pub kb: i64, // Kilobytes
+    pub mb: i64, // Megabytes
+    pub gb: i64, // Gigabytes
+}
+
 #[napi(object)]
 #[derive(Clone)]
 pub struct CacheOptions {
@@ -259,5 +267,15 @@ impl MussuranaCache {
         cache.memory_used = 0;
         cache.hits = 0;
         cache.misses = 0;
+    }
+}
+
+#[napi]
+pub fn create_memory_units() -> MemoryUnits {
+    MemoryUnits {
+        b: 1, // 1b
+        kb: 1024i64.pow(1), // 1kb
+        mb: 1024i64.pow(2), // 1mb
+        gb: 1024i64.pow(3), // 1gb
     }
 }
