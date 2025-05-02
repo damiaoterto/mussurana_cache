@@ -1,7 +1,14 @@
 {
   "name": "mussurana-cache",
   "description": "High-performance in-memory cache system for Node.js written in Rust, featuring TTL support, priority-based eviction, and configurable memory limits.",
-  "keywords": ["cache", "memory_cache", "mem_cache", "node_module", "node_native_module", "performance_cache"],
+  "keywords": [
+    "cache",
+    "memory_cache",
+    "mem_cache",
+    "node_module",
+    "node_native_module",
+    "performance_cache"
+  ],
   "version": "1.2.2",
   "main": "index.js",
   "types": "index.d.ts",
@@ -9,7 +16,7 @@
     "url": "https://github.com/damiaoterto/mussurana_cache"
   },
   "napi": {
-    "name": "mussurana_cache",
+    "name": "mussurana-cache",
     "triples": {
       "defaults": true,
       "additional": [
