@@ -15,13 +15,13 @@ A high-performance in-memory cache implementation for Node.js, written in Rust u
 ## Installation
 
 ```bash
-npm install mussurana_cache
+npm install mussurana-cache
 ```
 
 ## Quick Start
 
 ```typescript
-import { MussuranaCache } from 'mussurana_cache';
+import { MussuranaCache } from 'mussurana-cache';
 
 // Create a new cache instance
 const cache = new MussuranaCache({
@@ -130,7 +130,7 @@ When the cache is full, items are evicted based on:
 ## Example: Caching User Data
 
 ```typescript
-import { MussuranaCache } from 'mussurana_cache';
+import { MussuranaCache } from 'mussurana-cache';
 
 const cache = new MussuranaCache({
     maxMemory: 200 * 1024 * 1024  // 200MB
