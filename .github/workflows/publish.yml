@@ -51,7 +51,7 @@ jobs:
       - name: Setup yarn
         uses: threeal/setup-yarn-action@v2.0.0
         with:
-          version: latest
+          version: "4.5.1"
 
       - name: Install
         uses: dtolnay/rust-toolchain@stable
@@ -149,7 +149,7 @@ jobs:
       - name: Setup yarn
         uses: threeal/setup-yarn-action@v2.0.0
         with:
-          version: latest
+          version: "4.5.1"
 
       - name: Install dependencies
         run: yarn install
@@ -189,7 +189,7 @@ jobs:
       - name: Setup yarn
         uses: threeal/setup-yarn-action@v2.0.0
         with:
-          version: latest
+          version: "4.5.1"
 
       - name: Install dependencies
         run: yarn install
@@ -224,7 +224,7 @@ jobs:
       - name: Setup yarn
         uses: threeal/setup-yarn-action@v2.0.0
         with:
-          version: latest
+          version: "4.5.1"
 
       - name: Install dependencies
         run: yarn install
